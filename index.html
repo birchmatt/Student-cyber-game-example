@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Detective: Internet Safety Adventure</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .game-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 800px;
+            width: 100%;
+            padding: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .badge {
+            font-size: 4em;
+            margin: 20px 0;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1.2em;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: #e0e0e0;
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .question-section {
+            margin: 30px 0;
+        }
+
+        .scenario {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 5px solid #667eea;
+            margin-bottom: 20px;
+        }
+
+        .scenario-title {
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .question {
+            font-size: 1.2em;
+            margin: 20px 0;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .option {
+            background: #f0f0f0;
+            padding: 15px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 3px solid transparent;
+            font-size: 1em;
+        }
+
+        .option:hover {
+            background: #e0e0e0;
+            transform: translateX(5px);
+        }
+
+        .option.correct {
+            background: #d4edda;
+            border-color: #28a745;
+            animation: correctPulse 0.5s;
+        }
+
+        .option.incorrect {
+            background: #f8d7da;
+            border-color: #dc3545;
+            animation: shake 0.5s;
+        }
+
+        @keyframes correctPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            display: none;
+        }
+
+        .feedback.show {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .feedback.correct {
+            background: #d4edda;
+            color: #155724;
+            border-left: 5px solid #28a745;
+        }
+
+        .feedback.incorrect {
+            background: #f8d7da;
+            color: #721c24;
+            border-left: 5px solid #dc3545;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 25px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .certificate {
+            text-align: center;
+            padding: 40px;
+            border: 10px double #667eea;
+            border-radius: 20px;
+            background: linear-gradient(to bottom, #ffffff, #f8f9fa);
+        }
+
+        .certificate h2 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin: 20px 0;
+        }
+
+        .certificate .student-name {
+            font-size: 2em;
+            color: #764ba2;
+            margin: 30px 0;
+            font-weight: bold;
+        }
+
+        .certificate .score {
+            font-size: 1.5em;
+            color: #28a745;
+            margin: 20px 0;
+        }
+
+        .certificate .seal {
+            font-size: 5em;
+            margin: 20px 0;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .info-box {
+            background: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+
+        .info-box strong {
+            color: #856404;
+        }
+
+        @media print {
+            body {
+                background: white;
+            }
+            .game-container {
+                box-shadow: none;
+            }
+            .btn {
+                display: none;
+            }
+        }
+
+        .start-screen {
+            text-align: center;
+        }
+
+        .start-screen p {
+            font-size: 1.1em;
+            line-height: 1.6;
+            margin: 20px 0;
+            color: #555;
+        }
+
+        input[type="text"] {
+            padding: 15px;
+            font-size: 1.2em;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            width: 100%;
+            max-width: 400px;
+            margin: 20px auto;
+            display: block;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <!-- Start Screen -->
+        <div id="startScreen" class="start-screen">
+            <div class="header">
+                <div class="badge">🕵️</div>
+                <h1>Digital Detective: Internet Safety Adventure</h1>
+                <p class="subtitle">Learn to protect yourself online!</p>
+            </div>
+            
+            <div class="info-box">
+                <strong>What You'll Learn:</strong>
+                <ul style="text-align: left; margin: 10px 40px;">
+                    <li>What is a digital footprint and why it matters</li>
+                    <li>Understanding doxing and how to prevent it</li>
+                    <li>Safe social media practices</li>
+                    <li>Protecting your personal information</li>
+                </ul>
+            </div>
+
+            <p>Enter your name to begin your training as a Digital Detective:</p>
+            <input type="text" id="studentName" placeholder="Your Name" maxlength="50">
+            <button class="btn" onclick="startGame()">Start Adventure! 🚀</button>
+        </div>
+
+        <!-- Game Screen -->
+        <div id="gameScreen" class="hidden">
+            <div class="header">
+                <h1>Digital Detective 🕵️</h1>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressBar">Question <span id="currentQ">1</span> of <span id="totalQ">10</span></div>
+                </div>
+            </div>
+
+            <div class="question-section" id="questionSection"></div>
+            
+            <button class="btn hidden" id="nextBtn" onclick="nextQuestion()">Next Question ➡️</button>
+        </div>
+
+        <!-- Certificate Screen -->
+        <div id="certificateScreen" class="hidden certificate">
+            <div class="seal">🏆</div>
+            <h2>Certificate of Achievement</h2>
+            <p style="font-size: 1.2em;">This certifies that</p>
+            <div class="student-name" id="certName"></div>
+            <p style="font-size: 1.2em;">has successfully completed</p>
+            <h3 style="color: #667eea; margin: 15px 0;">Digital Detective: Internet Safety Training</h3>
+            <div class="score" id="finalScore"></div>
+            <p style="margin: 20px 0; color: #666;">
+                You are now certified as a Digital Detective!<br>
+                Keep protecting yourself and others online! 🛡️
+            </p>
+            <p style="font-size: 0.9em; color: #999;">Date: <span id="certDate"></span></p>
+            <button class="btn" onclick="window.print()">Print Certificate 🖨️</button>
+            <button class="btn" onclick="restartGame()" style="background: #6c757d;">Play Again</button>
+        </div>
+    </div>
+
+    <script>
+        // Sound effects using Web Audio API
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playCorrectSound() {
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.frequency.value = 523.25; // C note
+            oscillator.type = 'sine';
+            
+            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.5);
+            
+            // Second note
+            const oscillator2 = audioContext.createOscillator();
+            const gainNode2 = audioContext.createGain();
+            oscillator2.connect(gainNode2);
+            gainNode2.connect(audioContext.destination);
+            oscillator2.frequency.value = 659.25; // E note
+            oscillator2.type = 'sine';
+            gainNode2.gain.setValueAtTime(0.3, audioContext.currentTime + 0.1);
+            gainNode2.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.6);
+            oscillator2.start(audioContext.currentTime + 0.1);
+            oscillator2.stop(audioContext.currentTime + 0.6);
+        }
+
+        function playIncorrectSound() {
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.frequency.value = 200;
+            oscillator.type = 'sawtooth';
+            
+            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.3);
+        }
+
+        // Game data
+        const questions = [
+            {
+                scenario: "Emma loves posting photos on social media. She posts pictures from her soccer games, her house, and even her school ID card.",
+                question: "What is Emma creating online?",
+                options: [
+                    "A digital footprint - a trail of information about her",
+                    "A photo album that disappears",
+                    "Secret messages only friends can see",
+                    "Nothing important"
+                ],
+                correct: 0,
+                explanation: "Great job! A digital footprint is all the information about you that exists online. Everything Emma posts - photos, locations, school info - becomes part of her digital footprint that can be found by others, even years later!"
+            },
+            {
+                scenario: "Marcus wants to make a new social media account. The app asks for his full name, birthday, home address, and phone number.",
+                question: "What should Marcus do?",
+                options: [
+                    "Give all the information because the app asked for it",
+                    "Only provide what's required and keep private info like his address to himself",
+                    "Make up fake information",
+                    "Ask his friends to fill it out for him"
+                ],
+                correct: 1,
+                explanation: "Perfect! Marcus should only share necessary information and never give out private details like his home address or phone number on social media. Apps might ask for information, but we don't have to give everything!"
+            },
+            {
+                scenario: "Someone online is asking Sophia personal questions like where she lives, what school she goes to, and when her parents aren't home.",
+                question: "This is called 'doxing' preparation. What should Sophia do?",
+                options: [
+                    "Answer the questions to be polite",
+                    "Ignore it and keep playing",
+                    "Stop talking to them immediately, block them, and tell a trusted adult",
+                    "Give fake answers"
+                ],
+                correct: 2,
+                explanation: "Excellent detective work! When someone asks for personal information like this, it's a major red flag. Doxing is when someone collects and shares your private information to harm you. Always tell a trusted adult immediately!"
+            },
+            {
+                scenario: "Jayden finds out his friend posted his home address and phone number in a group chat 'as a joke.'",
+                question: "What is happening here?",
+                options: [
+                    "It's just a harmless joke between friends",
+                    "This is doxing - sharing someone's private information without permission",
+                    "It's okay because they're friends",
+                    "Nothing wrong, everyone does this"
+                ],
+                correct: 1,
+                explanation: "You got it! This is doxing - sharing someone's personal information without their permission. Even if someone thinks it's a joke, sharing private information like addresses and phone numbers can be dangerous and is never okay!"
+            },
+            {
+                scenario: "Lily wants to post a photo of her new puppy. In the background, you can see her street sign and house number.",
+                question: "Should Lily post this photo?",
+                options: [
+                    "Yes, everyone will love the cute puppy!",
+                    "No, she should crop or blur the background first to remove location information",
+                    "Yes, but only if she uses filters",
+                    "It doesn't matter"
+                ],
+                correct: 1,
+                explanation: "Smart thinking! Even when posting something innocent like a puppy photo, we need to check the background. Street signs, house numbers, school names, and other identifying details in photos can help strangers figure out where you live. Always check before posting!"
+            },
+            {
+                scenario: "Alex gets a message from someone claiming to be from his favorite game, saying he won a prize. They ask for his password to 'verify his account.'",
+                question: "What should Alex do?",
+                options: [
+                    "Give them his password to get the prize",
+                    "Never give out passwords to anyone, delete the message, and tell an adult",
+                    "Create a new password just for them",
+                    "Share his username but not password"
+                ],
+                correct: 1,
+                explanation: "Perfect! Real companies NEVER ask for your password. This is a scam trying to steal Alex's account and personal information. Never share passwords with anyone - not friends, not in messages, not even if someone claims to be from a company you know!"
+            },
+            {
+                scenario: "Maya's digital footprint includes posts from 3 years ago when she was younger. Some of them are embarrassing now.",
+                question: "Can Maya do anything about her old digital footprint?",
+                options: [
+                    "No, once it's online, it's there forever",
+                    "Yes! She can delete old posts and be more careful about what she shares now",
+                    "It doesn't matter because no one looks at old posts",
+                    "Only adults can delete things online"
+                ],
+                correct: 1,
+                explanation: "Great answer! While it's true that things can stay online for a long time, Maya can delete old posts and clean up her digital footprint. The best strategy is to think carefully before posting - ask yourself, 'Will I be okay with this being online in 5 years?'"
+            },
+            {
+                scenario: "Noah is video chatting with his online gaming friend. His friend asks him to show his student ID 'just to prove you're really a kid like me.'",
+                question: "What should Noah do?",
+                options: [
+                    "Show it quickly since they're friends",
+                    "Never show ID or documents on video, end the call, and tell an adult",
+                    "Show just the photo part",
+                    "It's fine because it's just a student ID"
+                ],
+                correct: 1,
+                explanation: "Excellent judgment! Student IDs have personal information like full names, photos, school names, and sometimes ID numbers. A real friend would never ask to see this. This could be someone trying to collect information about Noah - that's doxing preparation!"
+            },
+            {
+                scenario: "Zoe wants to join an online art contest. The website asks for her email, but also wants to know her full address, phone number, and which school she goes to.",
+                question: "What information is safe to share?",
+                options: [
+                    "All of it - they need it for the contest",
+                    "Just her email, and ask a parent/guardian before sharing anything else",
+                    "Everything except her phone number",
+                    "Make up fake information"
+                ],
+                correct: 1,
+                explanation: "Perfect! Zoe should only need to provide an email for an art contest. If a website asks for lots of personal information like home address, phone number, or school name, that's a red flag. Always check with a trusted adult before sharing personal information online!"
+            },
+            {
+                scenario: "During an online game, someone keeps asking Sam where he lives, what school he goes to, and if he wants to meet up in person.",
+                question: "What are the warning signs here?",
+                options: [
+                    "It's normal online gaming conversation",
+                    "Multiple red flags: asking for location, school, and wanting to meet - Sam should block them and tell an adult immediately",
+                    "They probably just want to be friends",
+                    "Sam should just ignore it and keep playing"
+                ],
+                correct: 1,
+                explanation: "Outstanding detective work! You identified multiple serious warning signs: asking personal questions about location and school, and wanting to meet in person. This is extremely dangerous behavior. Sam needs to stop all contact, block this person, and immediately tell a trusted adult!"
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        let studentName = "";
+        let answered = false;
+
+        function startGame() {
+            studentName = document.getElementById('studentName').value.trim();
+            if (!studentName) {
+                alert('Please enter your name to begin!');
+                return;
+            }
+
+            document.getElementById('startScreen').classList.add('hidden');
+            document.getElementById('gameScreen').classList.remove('hidden');
+            
+            displayQuestion();
+        }
+
+        function displayQuestion() {
+            answered = false;
+            const question = questions[currentQuestion];
+            const questionSection = document.getElementById('questionSection');
+            
+            document.getElementById('currentQ').textContent = currentQuestion + 1;
+            document.getElementById('totalQ').textContent = questions.length;
+            
+            const progressPercent = ((currentQuestion + 1) / questions.length) * 100;
+            document.getElementById('progressBar').style.width = progressPercent + '%';
+
+            questionSection.innerHTML = `
+                <div class="scenario">
+                    <div class="scenario-title">📖 Scenario:</div>
+                    <p>${question.scenario}</p>
+                </div>
+                <div class="question">${question.question}</div>
+                <div class="options" id="options"></div>
+                <div class="feedback" id="feedback"></div>
+            `;
+
+            const optionsDiv = document.getElementById('options');
+            question.options.forEach((option, index) => {
+                const optionDiv = document.createElement('div');
+                optionDiv.className = 'option';
+                optionDiv.textContent = option;
+                optionDiv.onclick = () => selectAnswer(index);
+                optionsDiv.appendChild(optionDiv);
+            });
+
+            document.getElementById('nextBtn').classList.add('hidden');
+        }
+
+        function selectAnswer(selectedIndex) {
+            if (answered) return;
+            
+            answered = true;
+            const question = questions[currentQuestion];
+            const options = document.querySelectorAll('.option');
+            const feedback = document.getElementById('feedback');
+
+            options[selectedIndex].classList.add(selectedIndex === question.correct ? 'correct' : 'incorrect');
+            options[question.correct].classList.add('correct');
+
+            if (selectedIndex === question.correct) {
+                score++;
+                playCorrectSound();
+                feedback.className = 'feedback correct show';
+                feedback.innerHTML = `<strong>✅ Correct!</strong><br>${question.explanation}`;
+            } else {
+                playIncorrectSound();
+                feedback.className = 'feedback incorrect show';
+                feedback.innerHTML = `<strong>❌ Not quite right.</strong><br>${question.explanation}`;
+            }
+
+            options.forEach(opt => opt.style.pointerEvents = 'none');
+            document.getElementById('nextBtn').classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            
+            if (currentQuestion < questions.length) {
+                displayQuestion();
+            } else {
+                showCertificate();
+            }
+        }
+
+        function showCertificate() {
+            document.getElementById('gameScreen').classList.add('hidden');
+            document.getElementById('certificateScreen').classList.remove('hidden');
+            
+            document.getElementById('certName').textContent = studentName;
+            document.getElementById('finalScore').textContent = `Score: ${score} out of ${questions.length} (${Math.round(score/questions.length*100)}%)`;
+            
+            const today = new Date();
+            document.getElementById('certDate').textContent = today.toLocaleDateString();
+        }
+
+        function restartGame() {
+            currentQuestion = 0;
+            score = 0;
+            studentName = "";
+            
+            document.getElementById('certificateScreen').classList.add('hidden');
+            document.getElementById('startScreen').classList.remove('hidden');
+            document.getElementById('studentName').value = '';
+        }
+    </script>
+</body>
+</html>
